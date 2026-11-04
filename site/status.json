@@ -1,0 +1,335 @@
+{
+  "generated_at": null,
+  "sites": [
+    {
+      "domain": "profokna.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://profokna.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "remont-televizor.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://remont-televizor.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "maximalizm.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://maximalizm.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "mpotolki.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://mpotolki.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "peretiazhka-mebeli.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://peretiazhka-mebeli.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "remont-holodilnik.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://remont-holodilnik.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "remont-stiralka.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://remont-stiralka.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "shkafykupe.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://shkafykupe.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "kupit-pvh-okna.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://kupit-pvh-okna.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "zasteklit-balkon.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://zasteklit-balkon.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "okna-balkon.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://okna-balkon.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "glavokna.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://glavokna.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "okna-eko.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://okna-eko.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "condi.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://condi.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "mogilevoknapvh.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://mogilevoknapvh.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "balkonmogilev.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://balkonmogilev.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "balkon-gomel.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://balkon-gomel.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "okna-pvh-gomel.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://okna-pvh-gomel.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "plastikovye-okna-gomel.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://plastikovye-okna-gomel.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "potolki-natjazhnye.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://potolki-natjazhnye.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "balkonnye-ramy-gomel.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://balkonnye-ramy-gomel.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "megaokna.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://megaokna.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "ritual-byro.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://ritual-byro.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "prostroy.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://prostroy.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "krovprofi.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://krovprofi.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "ritualnyeuslugi.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://ritualnyeuslugi.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "dekorfasad.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://dekorfasad.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "i-herbcom.ru",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://i-herbcom.ru",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "alyuminievye-okna.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://alyuminievye-okna.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "okna-ramy.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://okna-ramy.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "ritualbyro.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://ritualbyro.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "scorbim.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://scorbim.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "blagoustroistvo-mogil.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://blagoustroistvo-mogil.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "kupit-okna-pvh.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://kupit-okna-pvh.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "remont-generator.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://remont-generator.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    },
+    {
+      "domain": "remont-mebeli.by",
+      "state": "pending",
+      "http_code": null,
+      "url": "https://remont-mebeli.by",
+      "response_ms": null,
+      "detail": "Ожидается первая проверка",
+      "checked_at": null
+    }
+  ],
+  "counts": {
+    "total": 36,
+    "up": 0,
+    "down": 0,
+    "limited": 0
+  }
+}
