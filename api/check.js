@@ -71,7 +71,7 @@ async function probe(url) {
         response_ms: Date.now() - started, detail: "HTTP " + code
       };
     } catch (error) {
-      if (method === "HEAD") continue;
+      // A transport failure on HEAD usually also affects GET; avoid doubling timeouts.
       return { state: "down", http_code: null, url, response_ms: null, detail: String(error?.message || error).slice(0,180) };
     }
   }
