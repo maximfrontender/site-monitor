@@ -1,0 +1,13 @@
+{
+  "name": "site-monitor-36",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "description": "Public uptime dashboard with scheduled GitHub checks and manual Node checks"
+}
