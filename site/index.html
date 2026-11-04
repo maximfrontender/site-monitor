@@ -70,6 +70,13 @@ if(!data)return;
 document.getElementById("total").textContent=data.sites.length;
 ["up","down","limited"].forEach(function(key){document.getElementById(key).textContent=data.generated_at?data.sites.filter(function(s){return s.state===key}).length:"—"});
 document.getElementById("checked").textContent=data.generated_at?"Последняя проверка: "+date(data.generated_at):"Ожидается первая автоматическая проверка";
+var banner=document.getElementById("banner");
+var latest=data.generated_at?new Date(data.generated_at).getTime():NaN;
+if(!Number.isFinite(latest)||Date.now()-latest>30*60*1000){
+banner.textContent=data.generated_at?"⚠️ Данные устарели: последняя проверка "+date(data.generated_at)+". Проверки могли не запуститься по расписанию.":"⚠️ Нет результатов мониторинга: автоматическая проверка ещё не выполнена.";
+banner.style.display="block";
+}else{banner.style.display="none"}
+
 var term=document.getElementById("search").value.trim().toLowerCase();
 var list=data.sites.filter(function(s){return (filter==="all"||s.state===filter)&&s.domain.includes(term)});
 document.getElementById("shown").textContent="("+list.length+")";
