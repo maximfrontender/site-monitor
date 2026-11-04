@@ -82,7 +82,7 @@ a{color:#dceafe;text-decoration:none;font-weight:650}a:hover{text-decoration:und
     <div class="manual-heading" id="manual-heading"></div>
     <div class="manual-explain" id="manual-explain"></div>
     <div class="manual-progress" id="manual-progress"><span></span></div>
-    <div class="manual-actions"><a id="manual-run-link" href="https://github.com/maximfrontender/site-monitor/actions/workflows/monitor.yml" target="_blank" rel="noopener noreferrer">Открыть журнал проверок GitHub ↗</a></div>
+    <div class="manual-actions"><a id="manual-run-link" href="https://github.com/maximfrontender/site-monitor/actions/workflows/monitor.yml" target="_blank" rel="noopener noreferrer">История проверок по расписанию ↗</a></div>
   </div>
 </div>
 <div class="toolbar"><input id="search" type="search" placeholder="Поиск по домену…" aria-label="Поиск по домену">
@@ -159,7 +159,7 @@ function showManualStatus(stage,heading,detail,runUrl){
   manualProgress.classList.toggle("done",stage==="success"||stage==="error"||stage==="auth");
   var safeRunUrl=runUrl&&/^https:\/\/github\.com\/maximfrontender\/site-monitor\/actions\/runs\/\d+$/.test(runUrl);
   manualRunLink.href=safeRunUrl?runUrl:"https://github.com/maximfrontender/site-monitor/actions/workflows/monitor.yml";
-  manualRunLink.textContent=safeRunUrl?"Смотреть эту проверку на GitHub ↗":"Открыть журнал проверок GitHub ↗";
+  manualRunLink.textContent=safeRunUrl?"Смотреть эту проверку на GitHub ↗":"История проверок по расписанию ↗";
 }
 function elapsed(){
   return Math.max(0,Math.round((Date.now()-manualStartedAt)/1000));
