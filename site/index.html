@@ -20,7 +20,18 @@ p{color:#9fafc3;line-height:1.6}.lead{margin-top:0}
 .paneltop{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:22px 24px 10px}
 h2{font-size:19px;margin:0 0 5px}.muted{color:#90a5bc;font-size:12px}
 button{background:#223650;border:1px solid #3a5673;color:#edf3ff;font:inherit;font-size:13px;padding:10px 14px;cursor:pointer;border-radius:9px}
-button:hover{background:#304766}button:disabled{opacity:.5}
+button:hover{background:#304766}button:disabled{opacity:.5;cursor:wait}
+.manual-status{margin:0 24px 12px;font-size:12px;color:#9fc4e7;min-height:1.3em}
+.manual-status.error{color:#ff9aa7}
+dialog{border:1px solid #3a5673;border-radius:15px;max-width:470px;width:calc(100% - 30px);padding:22px;color:#e9f1ff;background:#152236;box-shadow:0 18px 70px #0009}
+dialog::backdrop{background:#030813b9}
+dialog h3{margin:0 0 12px;font-size:19px}
+dialog p{margin:8px 0 15px;font-size:13px}
+dialog input{width:100%}
+.auth-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.auth-actions button{flex:1}
+.auth-help{font-size:12px;color:#98afc8}
+.auth-help a{color:#a9d5ff;text-decoration:underline}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:10px 24px 20px}
 input{width:270px;max-width:100%;background:#0e1725;border:1px solid #31455e;border-radius:9px;padding:11px 12px;font:inherit;color:#fff;font-size:13px}
 .filters{display:flex;flex-wrap:wrap;gap:6px}.filters button{background:transparent;border-color:transparent;color:#aabbcc}
@@ -49,18 +60,36 @@ a{color:#dceafe;text-decoration:none;font-weight:650}a:hover{text-decoration:und
 </section>
 <div id="banner" class="banner" role="status"></div>
 <section class="panel">
-<div class="paneltop"><div><h2>Список сайтов <span class="muted" id="shown"></span></h2><div class="muted" id="checked">Ожидается первая проверка</div></div><button id="refresh">↻ Обновить</button></div>
+<div class="paneltop"><div><h2>Список сайтов <span class="muted" id="shown"></span></h2><div class="muted" id="checked">Ожидается первая проверка</div></div><button id="refresh" title="Принудительно проверить все сайты">↻ Обновить</button></div>
+<div class="manual-status" id="manual-status" aria-live="polite"></div>
 <div class="toolbar"><input id="search" type="search" placeholder="Поиск по домену…" aria-label="Поиск по домену">
 <div class="filters" role="group" aria-label="Фильтры">
 <button class="active" data-filter="all">Все</button><button data-filter="up">Доступны</button><button data-filter="down">Недоступны</button><button data-filter="limited">Ограничены</button><button data-filter="pending">Ожидают</button>
 </div></div>
 <div class="scroll"><table><thead><tr><th>Сайт</th><th>Статус</th><th>HTTP-код</th><th>Время ответа</th><th>Проверен</th></tr></thead><tbody id="rows"><tr><td colspan="5">Загрузка статусов…</td></tr></tbody></table></div>
 </section>
-<p class="note">Доступность проверяется с серверов GitHub, поэтому может отличаться от доступности из вашей страны. Код 401, 403 или 429 означает, что автоматическая проверка ограничена. Кнопка «Обновить» перечитывает результаты, а не запускает новую проверку.</p>
+<p class="note">Доступность проверяется с серверов GitHub, поэтому может отличаться от доступности из вашей страны. Код 401, 403 или 429 означает, что автоматическая проверка ограничена. Кнопка «Обновить» запускает внеочередную проверку через GitHub Actions после авторизации. Публикация результатов может занять несколько минут.</p>
+<dialog id="auth-dialog" aria-labelledby="auth-title">
+  <h3 id="auth-title">Внеочередная проверка</h3>
+  <p>Чтобы кнопка могла запускать GitHub Actions, нужен <strong>fine-grained токен GitHub</strong> с доступом только к репозиторию <code>maximfrontender/site-monitor</code> и разрешением <strong>Actions: Read and write</strong>.</p>
+  <form id="auth-form">
+    <label class="auth-help" for="github-token">Токен GitHub (не отправляйте его в чат или кому-либо ещё)</label>
+    <input id="github-token" type="password" placeholder="github_pat_..." autocomplete="off" spellcheck="false" required>
+    <div class="auth-actions">
+      <button type="button" id="auth-cancel">Отмена</button>
+      <button type="submit">Запустить проверку</button>
+    </div>
+  </form>
+  <p class="auth-help">Токен используется только для запроса к api.github.com и хранится исключительно в памяти открытой вкладки. После перезагрузки страницы его придётся ввести снова.</p>
+  <p class="auth-help"><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">Создать токен GitHub</a> · <a href="https://github.com/maximfrontender/site-monitor/actions/workflows/monitor.yml" target="_blank" rel="noopener noreferrer">Запустить через GitHub без токена на сайте</a></p>
+</dialog>
 </main><script>
 (function(){
 "use strict";
-var data=null, filter="all";
+var data=null, filter="all", manualToken="", manualBusy=false;
+var manualStatus=document.getElementById("manual-status");
+var refreshButton=document.getElementById("refresh");
+var authDialog=document.getElementById("auth-dialog");
 var labels={up:"Доступен",down:"Недоступен",limited:"Ограничен",pending:"Ожидание"};
 var rows=document.getElementById("rows");
 function el(tag,text){var e=document.createElement(tag);e.textContent=text;return e}
@@ -93,8 +122,7 @@ rows.appendChild(tr)
 })
 }
 async function load(){
-var btn=document.getElementById("refresh"),banner=document.getElementById("banner");
-btn.disabled=true;
+var banner=document.getElementById("banner");
 try{
 var resp=await fetch("status.json?v="+Date.now(),{cache:"no-store"});
 if(!resp.ok)throw Error("HTTP "+resp.status);
@@ -102,11 +130,76 @@ var payload=await resp.json();
 if(!Array.isArray(payload.sites))throw Error("Неверный формат данных");
 data=payload;banner.style.display="none";render()
 }catch(e){banner.textContent="Не удалось загрузить статусы: "+e.message;banner.style.display="block";if(!data)rows.replaceChildren(el("tr",""))}
-finally{btn.disabled=false}
+finally{}
 }
 document.getElementById("search").addEventListener("input",render);
 document.querySelectorAll("[data-filter]").forEach(function(btn){btn.addEventListener("click",function(){filter=btn.dataset.filter;document.querySelectorAll("[data-filter]").forEach(function(b){b.classList.toggle("active",b===btn)});render()})});
-document.getElementById("refresh").addEventListener("click",load);
+function showManualStatus(message,isError){
+manualStatus.textContent=message;
+manualStatus.classList.toggle("error",!!isError);
+}
+function finishManual(){
+manualBusy=false;
+refreshButton.disabled=false;
+refreshButton.textContent="↻ Обновить";
+}
+async function runManualCheck(){
+if(manualBusy||!manualToken)return;
+manualBusy=true;
+refreshButton.disabled=true;
+refreshButton.textContent="⏳ Проверяется...";
+showManualStatus("Запускаем проверку всех 36 сайтов через GitHub Actions…");
+var oldTime=data&&data.generated_at?Date.parse(data.generated_at):0;
+try{
+  var response=await fetch("https://api.github.com/repos/maximfrontender/site-monitor/actions/workflows/monitor.yml/dispatches",{
+    method:"POST",
+    headers:{
+      "Accept":"application/vnd.github+json",
+      "Authorization":"Bearer "+manualToken,
+      "Content-Type":"application/json",
+      "X-GitHub-Api-Version":"2022-11-28"
+    },
+    body:JSON.stringify({ref:"main"})
+  });
+  if(!response.ok){
+    var message="Ошибка GitHub API: HTTP "+response.status;
+    try{var info=await response.json();if(info.message)message+=" — "+info.message}catch(_){}
+    if(response.status===401||response.status===403)manualToken="";
+    throw Error(message);
+  }
+  showManualStatus("Внеочередная проверка запущена. Ожидаем публикации новых результатов…");
+  var deadline=Date.now()+5*60*1000;
+  while(Date.now()<deadline){
+    await new Promise(function(resolve){setTimeout(resolve,12000)});
+    await load();
+    var newTime=data&&data.generated_at?Date.parse(data.generated_at):0;
+    if(newTime&&newTime>oldTime){
+      showManualStatus("✓ Новые результаты опубликованы: "+date(data.generated_at));
+      return;
+    }
+  }
+  showManualStatus("Проверка отправлена, но новые результаты пока не опубликованы. Посмотрите вкладку GitHub Actions.",true);
+}catch(error){
+  showManualStatus("Не получилось запустить проверку: "+error.message+". Проверьте права токена (Actions: Read and write).",true);
+}finally{finishManual()}
+}
+refreshButton.addEventListener("click",function(){
+if(manualBusy)return;
+if(manualToken){runManualCheck();return}
+authDialog.showModal();
+document.getElementById("github-token").focus();
+});
+document.getElementById("auth-cancel").addEventListener("click",function(){authDialog.close()});
+document.getElementById("auth-form").addEventListener("submit",function(event){
+event.preventDefault();
+var input=document.getElementById("github-token");
+var token=input.value.trim();
+if(!token)return;
+manualToken=token;
+input.value="";
+authDialog.close();
+runManualCheck();
+});
 load();setInterval(load,60000)
 })();
 </script></body></html>
