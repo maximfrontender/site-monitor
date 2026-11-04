@@ -1,4 +1,4 @@
-// Vercel serverless function for real-time, token-free website reachability checks.
+// Shared real-time website checker for Vercel or Render.
 // Domains are fixed in the source: visitors cannot submit arbitrary target URLs.
 const DOMAINS = [
   "profokna.by",
@@ -87,6 +87,29 @@ async function check(domain) {
   return { domain, ...chosen, checked_at: now() };
 }
 
+// Shared function for Node and serverless handlers.
+export async function runChecks() {
+  const results = new Array(DOMAINS.length);
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(MAX_PARALLEL, DOMAINS.length) }, async () => {
+    while (next < DOMAINS.length) {
+      const index = next++;
+      results[index] = await check(DOMAINS[index]);
+    }
+  }));
+  return {
+    generated_at: now(),
+    source: "manual",
+    sites: results,
+    counts: {
+      total: results.length,
+      up: results.filter(item => item.state === "up").length,
+      down: results.filter(item => item.state === "down").length,
+      limited: results.filter(item => item.state === "limited").length
+    }
+  };
+}
+
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -95,34 +118,16 @@ export default async function handler(req, res) {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Use POST to check websites" });
   }
-  // Browser requests can only be made from the deployed same-origin dashboard.
-  // This prevents casual cross-site use, not sophisticated server-to-server abuse.
   const origin = req.headers.origin;
   let sameOrigin = false;
   try { sameOrigin = Boolean(origin && new URL(origin).host === req.headers.host); } catch {}
   if (!sameOrigin) return res.status(403).json({ error: "Only same-origin dashboard requests are allowed" });
-
   try {
-    const results = new Array(DOMAINS.length);
-    let next = 0;
-    await Promise.all(Array.from({ length: Math.min(MAX_PARALLEL, DOMAINS.length) }, async () => {
-      while (next < DOMAINS.length) {
-        const index = next++;
-        results[index] = await check(DOMAINS[index]);
-      }
-    }));
-    return res.status(200).json({
-      generated_at: now(),
-      source: "manual",
-      sites: results,
-      counts: {
-        total: results.length,
-        up: results.filter(item => item.state === "up").length,
-        down: results.filter(item => item.state === "down").length,
-        limited: results.filter(item => item.state === "limited").length
-      }
-    });
+    return res.status(200).json(await runChecks());
   } catch (error) {
-    return res.status(500).json({ error: "Website check failed", detail: String(error?.message || error).slice(0,180) });
+    return res.status(500).json({
+      error: "Website check failed",
+      detail: String(error?.message || error).slice(0,180)
+    });
   }
 }
