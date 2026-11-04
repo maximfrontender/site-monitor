@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Мониторинг доступности сайтов</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#e9f1ff;background:#0b111d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#14263c 0,#0b111d 55%)}
+main{max-width:1180px;margin:auto;padding:32px 22px 70px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:750;font-size:18px;letter-spacing:.3px}.brand b{color:#56dab8}
+.pill{border:1px solid #3a5367;border-radius:30px;background:#1a3040;padding:8px 13px;color:#b9d3e5;font-size:12px}
+h1{font-size:clamp(28px,4vw,46px);letter-spacing:-1.5px;margin:52px 0 10px}
+p{color:#9fafc3;line-height:1.6}.lead{margin-top:0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:30px 0}
+.stat{border:1px solid #29374d;background:linear-gradient(135deg,#172334,#121b29);border-radius:14px;padding:20px 18px}
+.stat label{display:block;color:#a5b8ce;font-size:13px}.stat strong{display:block;font-size:34px;margin-top:8px}
+.green{color:#45dab0}.red{color:#ff7b90}.yellow{color:#ffcd70}
+.panel{border:1px solid #29374d;background:#111b2a;border-radius:16px;overflow:hidden}
+.paneltop{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:22px 24px 10px}
+h2{font-size:19px;margin:0 0 5px}.muted{color:#90a5bc;font-size:12px}
+button{background:#223650;border:1px solid #3a5673;color:#edf3ff;font:inherit;font-size:13px;padding:10px 14px;cursor:pointer;border-radius:9px}
+button:hover{background:#304766}button:disabled{opacity:.5}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:10px 24px 20px}
+input{width:270px;max-width:100%;background:#0e1725;border:1px solid #31455e;border-radius:9px;padding:11px 12px;font:inherit;color:#fff;font-size:13px}
+.filters{display:flex;flex-wrap:wrap;gap:6px}.filters button{background:transparent;border-color:transparent;color:#aabbcc}
+.filters button.active{border-color:#415c7a;background:#2b415e;color:#fff}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:670px}
+th{text-align:left;font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:#98a9bf;background:#142235}
+th,td{padding:15px 23px;border-bottom:1px solid #273449}
+td{font-size:13px}tr:last-child td{border-bottom:0}tbody tr:hover{background:#1c2c40}
+a{color:#dceafe;text-decoration:none;font-weight:650}a:hover{text-decoration:underline}
+.status{display:inline-block;border-radius:50px;padding:6px 11px;font-size:12px;font-weight:700}
+.status.up{background:#103c34;color:#4ee1b3}.status.down{background:#4c2632;color:#ff8193}
+.status.limited{background:#493a21;color:#ffd27e}.status.pending{background:#27354c;color:#b5c8df}
+.note{padding-top:20px;font-size:12px}
+.banner{border:1px solid #705936;background:#362a1c;color:#ffda95;padding:12px 16px;border-radius:9px;margin-bottom:16px;display:none}
+@media(max-width:750px){.stats{grid-template-columns:repeat(2,1fr)}h1{margin-top:38px}.stat strong{font-size:27px}.toolbar{align-items:stretch}.paneltop{padding:18px}.toolbar{padding:10px 18px 18px}input{width:100%}}
+</style></head><body>
+<main>
+<header><div class="brand"><b>●</b> SiteWatch <span class="muted">/ Status</span></div><span class="pill">Проверка раз в час</span></header>
+<h1>Доступность сайтов</h1>
+<p class="lead">Текущий статус 36 сайтов. Автоматические проверки через GitHub Actions каждый час.</p>
+<section class="stats" aria-label="Статистика">
+<div class="stat"><label>Всего сайтов</label><strong id="total">36</strong></div>
+<div class="stat"><label>Доступны</label><strong class="green" id="up">—</strong></div>
+<div class="stat"><label>Недоступны</label><strong class="red" id="down">—</strong></div>
+<div class="stat"><label>Ограничены</label><strong class="yellow" id="limited">—</strong></div>
+</section>
+<div id="banner" class="banner" role="status"></div>
+<section class="panel">
+<div class="paneltop"><div><h2>Список сайтов <span class="muted" id="shown"></span></h2><div class="muted" id="checked">Ожидается первая проверка</div></div><button id="refresh">↻ Обновить</button></div>
+<div class="toolbar"><input id="search" type="search" placeholder="Поиск по домену…" aria-label="Поиск по домену">
+<div class="filters" role="group" aria-label="Фильтры">
+<button class="active" data-filter="all">Все</button><button data-filter="up">Доступны</button><button data-filter="down">Недоступны</button><button data-filter="limited">Ограничены</button><button data-filter="pending">Ожидают</button>
+</div></div>
+<div class="scroll"><table><thead><tr><th>Сайт</th><th>Статус</th><th>HTTP-код</th><th>Время ответа</th><th>Проверен</th></tr></thead><tbody id="rows"><tr><td colspan="5">Загрузка статусов…</td></tr></tbody></table></div>
+</section>
+<p class="note">Доступность проверяется с серверов GitHub, поэтому может отличаться от доступности из вашей страны. Код 401, 403 или 429 означает, что автоматическая проверка ограничена. Кнопка «Обновить» перечитывает результаты, а не запускает новую проверку.</p>
+</main><script>
+(function(){
+"use strict";
+var data=null, filter="all";
+var labels={up:"Доступен",down:"Недоступен",limited:"Ограничен",pending:"Ожидание"};
+var rows=document.getElementById("rows");
+function el(tag,text){var e=document.createElement(tag);e.textContent=text;return e}
+function date(value){return value?new Date(value).toLocaleString("ru-RU"):"—"}
+function render(){
+if(!data)return;
+document.getElementById("total").textContent=data.sites.length;
+["up","down","limited"].forEach(function(key){document.getElementById(key).textContent=data.generated_at?data.sites.filter(function(s){return s.state===key}).length:"—"});
+document.getElementById("checked").textContent=data.generated_at?"Последняя проверка: "+date(data.generated_at):"Ожидается первая автоматическая проверка";
+var term=document.getElementById("search").value.trim().toLowerCase();
+var list=data.sites.filter(function(s){return (filter==="all"||s.state===filter)&&s.domain.includes(term)});
+document.getElementById("shown").textContent="("+list.length+")";
+rows.replaceChildren();
+if(!list.length){var tr=el("tr","");var td=el("td","Нет сайтов по выбранному фильтру");td.colSpan=5;tr.appendChild(td);rows.appendChild(tr);return}
+list.forEach(function(s){
+var tr=document.createElement("tr"),td=document.createElement("td"),a=el("a",s.domain);
+a.href="https://"+s.domain;a.target="_blank";a.rel="noopener noreferrer";td.appendChild(a);tr.appendChild(td);
+td=document.createElement("td");var badge=el("span",labels[s.state]||s.state);badge.className="status "+(labels[s.state]?s.state:"pending");td.appendChild(badge);tr.appendChild(td);
+tr.appendChild(el("td",s.http_code==null?"—":String(s.http_code)));
+tr.appendChild(el("td",s.response_ms==null?"—":s.response_ms+" мс"));
+tr.appendChild(el("td",date(s.checked_at)));
+rows.appendChild(tr)
+})
+}
+async function load(){
+var btn=document.getElementById("refresh"),banner=document.getElementById("banner");
+btn.disabled=true;
+try{
+var resp=await fetch("status.json?v="+Date.now(),{cache:"no-store"});
+if(!resp.ok)throw Error("HTTP "+resp.status);
+var payload=await resp.json();
+if(!Array.isArray(payload.sites))throw Error("Неверный формат данных");
+data=payload;banner.style.display="none";render()
+}catch(e){banner.textContent="Не удалось загрузить статусы: "+e.message;banner.style.display="block";if(!data)rows.replaceChildren(el("tr",""))}
+finally{btn.disabled=false}
+}
+document.getElementById("search").addEventListener("input",render);
+document.querySelectorAll("[data-filter]").forEach(function(btn){btn.addEventListener("click",function(){filter=btn.dataset.filter;document.querySelectorAll("[data-filter]").forEach(function(b){b.classList.toggle("active",b===btn)});render()})});
+document.getElementById("refresh").addEventListener("click",load);
+load();setInterval(load,60000)
+})();
+</script></body></html>
