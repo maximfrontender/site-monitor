@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/check.js": {
+      "maxDuration": 120
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/status.json",
+      "destination": "https://maximfrontender.github.io/site-monitor/status.json"
+    }
+  ]
+}
